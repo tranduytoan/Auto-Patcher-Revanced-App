@@ -49,10 +49,9 @@ if %app%==1 (
     set out=%app_name%%version%.apk
 
     java -jar ../resources/re-cli.jar patch ^
-    -b ../resources/patches.jar ^
-    -m ../resources/inte.apk ^
-    -i remove-screen-capture-restriction -i remove-screenshot-restriction ^
-    -e always-autorepeat -e comments -e disable-fullscreen-panels -e disable-player-popup-panels -e spoof-app-version -e enable-debugging ^
+    -p ../resources/patches.rvp ^
+    -e "Remove screen capture restriction" -e "Remove screenshot restriction" ^
+    -d "Disable player popup panels" -d "Spoof app version" -d "Enable debugging" ^
     -o %out% ^
     ../resources/yt.apk
 goto:eof
@@ -70,8 +69,7 @@ goto:eof
     set out=%app_name%%version%.apk
 
     java -jar ../resources/re-cli.jar patch ^
-    -b ../resources/patches.jar ^
-    -m ../resources/inte.apk ^
+    -p ../resources/patches.rvp ^
     -o %out% ^
     ../resources/yt-music.apk
 goto:eof
@@ -89,8 +87,7 @@ goto:eof
     set out=%app_name%%version%.apk
 
     java -jar ../resources/re-cli.jar patch ^
-    -b ../resources/patches.jar ^
-    -m ../resources/inte.apk ^
+    -p ../resources/patches.rvp ^
     -o %out% ^
     ../resources/photos.apk
 goto:eof
