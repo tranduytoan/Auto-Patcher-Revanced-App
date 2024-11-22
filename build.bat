@@ -11,7 +11,7 @@ set /p app=Input app number:
 
 REM check Revanced's resources files
 call :checkFileIsExist re-cli.jar
-call :checkFileIsExist patches.jar
+call :checkFileIsExist patches.rvp
 call :checkFileIsExist inte.apk
 
 if %app%==1 (
