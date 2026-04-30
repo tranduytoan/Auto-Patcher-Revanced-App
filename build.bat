@@ -1,18 +1,12 @@
 @echo off
 
-echo Try to delete old 'temp' folder if exist...
-rd /s /q temp
-md temp
-cd ./temp
-
 REM select app to patch
-echo Select app to patch (1: Youtube, 2: YT Music, 3: Google Photos):
+echo Select app to patch (1: Youtube, 2: YT Music, 3: Google Photos, 4: Spotify):
 set /p app=Input app number: 
 
 REM check Revanced's resources files
 call :checkFileIsExist re-cli.jar
 call :checkFileIsExist patches.rvp
-call :checkFileIsExist inte.apk
 
 if %app%==1 (
     call :checkFileIsExist yt.apk
@@ -27,6 +21,11 @@ if %app%==1 (
 ) else if %app%==3 (
     call :checkFileIsExist photos.apk
     call :patchGooglePhotos
+    pause
+    exit
+) else if %app%==4 (
+    call :checkFileIsExist spotify.apk
+    call :patchSpotify
     pause
     exit
 ) else (
@@ -45,15 +44,16 @@ if %app%==1 (
         set "version=unknow_version"
         echo Use default value: %version%
     )
-    set app_name=youtube_revanced_
-    set out=%app_name%%version%.apk
+    set out=output\youtube\youtube_revanced_%version%.apk
 
-    java -jar ../resources/re-cli.jar patch ^
-    -p ../resources/patches.rvp ^
+    java -jar resources/re-cli.jar patch ^
+	-b --purge ^
+    -p resources/patches.rvp ^
+	--keystore=resources/revanced.keystore ^
     -e "Remove screen capture restriction" -e "Remove screenshot restriction" ^
     -d "Disable player popup panels" -d "Spoof app version" -d "Enable debugging" ^
     -o %out% ^
-    ../resources/yt.apk
+    resources/yt.apk
 goto:eof
 
 :patchYoutubeMusic
@@ -65,13 +65,14 @@ goto:eof
         set "version=unknow_version"
         echo Use default value: %version%
     )
-    set app_name=youtube_music_revanced_
-    set out=%app_name%%version%.apk
+    set out=output\youtube_music\youtube_music_revanced_%version%.apk
 
-    java -jar ../resources/re-cli.jar patch ^
-    -p ../resources/patches.rvp ^
+    java -jar resources/re-cli.jar patch ^
+	-b --purge ^
+    -p resources/patches.rvp ^
+	--keystore=resources/revanced.keystore ^
     -o %out% ^
-    ../resources/yt-music.apk
+    resources/yt-music.apk
 goto:eof
 
 :patchGooglePhotos
@@ -83,19 +84,39 @@ goto:eof
         set "version=unknow_version"
         echo Use default value: %version%
     )
-    set app_name=google_photos_revanced_
-    set out=%app_name%%version%.apk
+    set out=output\google_photos\google_photos_revanced_%version%.apk
 
-    java -jar ../resources/re-cli.jar patch ^
-    -p ../resources/patches.rvp ^
+    java -jar resources/re-cli.jar patch ^
+	-b --purge ^
+    -p resources/patches.rvp ^
+	--keystore=resources/revanced.keystore ^
     -o %out% ^
-    ../resources/photos.apk
+    resources/photos.apk
+goto:eof
+
+:patchSpotify
+    REM input version
+    set /p version=Input spotify version (E.g: v.9.0.26):
+
+    REM if input is null
+    if "%version%"=="" (
+        set "version=unknow_version"
+        echo Use default value: %version%
+    )
+    set out=output\spotify\spotify_revanced_%version%.apk
+
+    java -jar resources/re-cli.jar patch ^
+	-b --purge ^
+    -p resources/patches.rvp ^
+	--keystore=resources/revanced.keystore ^
+    -o %out% ^
+    resources/spotify.apk
 goto:eof
 
 :checkFileIsExist
     set file_name=%1
     echo Checking resources file: %file_name%
-    if exist ../resources/%file_name% (
+    if exist resources/%file_name% (
         echo %file_name% found
     ) else (
         echo ERROR: %file_name% not found
