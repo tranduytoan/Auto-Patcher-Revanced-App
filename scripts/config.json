@@ -1,0 +1,11 @@
+{
+  "include_patches": [
+    "Remove screen capture restriction",
+    "Remove screenshot restriction"
+  ],
+  "exclude_patches": [
+    "Disable player popup panels",
+    "Spoof app version",
+    "Enable debugging"
+  ]
+}
