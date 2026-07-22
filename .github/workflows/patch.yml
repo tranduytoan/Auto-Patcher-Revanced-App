@@ -81,6 +81,7 @@ jobs:
 
       - name: Create Release
         if: steps.check_version.outputs.skip != 'true' && steps.patch_manager.outputs.skip != 'true'
+        id: create_release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.patch_manager.outputs.release_tag }}
@@ -94,3 +95,16 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Discord Notification
+        if: steps.check_version.outputs.skip != 'true' && steps.patch_manager.outputs.skip != 'true' && env.DISCORD_WEBHOOK != ''
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          RELEASE_TAG: ${{ steps.patch_manager.outputs.release_tag }}
+          YT_VERSION: ${{ steps.patch_manager.outputs.yt_version }}
+          PATCHES_VERSION: ${{ steps.patch_manager.outputs.patches_version }}
+        run: |
+          RELEASE_URL="https://github.com/${{ github.repository }}/releases/tag/$RELEASE_TAG"
+          curl -H "Content-Type: application/json" \
+            -d "{\"embeds\": [{\"title\": \"New YouTube ReVanced Build!\", \"description\": \"An automated build has completed successfully.\", \"color\": 65280, \"fields\": [{\"name\": \"YouTube Version\", \"value\": \"\`$YT_VERSION\`\", \"inline\": true}, {\"name\": \"Patches Version\", \"value\": \"\`$PATCHES_VERSION\`\", \"inline\": true}, {\"name\": \"Release Link\", \"value\": \"[Download APK here]($RELEASE_URL)\"}]}]}" \
+            $DISCORD_WEBHOOK
